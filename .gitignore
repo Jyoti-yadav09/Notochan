@@ -1,0 +1,14 @@
+# Node modules (ignore for both frontend and backend)
+notochan-frontend/node_modules/
+notochan-backend/node_modules/
+
+# Environment files
+notochan-frontend/.env
+notochan-backend/.env
+
+# Logs
+*.log
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
