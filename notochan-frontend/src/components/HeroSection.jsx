@@ -13,7 +13,7 @@ const HeroSection = () => {
         <p className='text-lg mb-4 text-[#555]'>
           Cute, minimal & lightning fast — your personal note-sharing space.
         </p>
-       <button >Login</button>
+       
       </div>
 
       <div className='md:w-1/2 mt-30 flex justify-center'>
