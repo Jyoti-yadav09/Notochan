@@ -26,9 +26,9 @@ const Header = () => {
         <a href="#AboutSection" className="hover:underline">About</a>
       </nav>
       
-      <button onClick={()=>navigate("/AuthPage")}
+      <button onClick={()=>navigate("/login")}
          
-      className="px-5 py-2 bg-[#4B0082] text-white rounded-md hover:bg-[#5f20b5] transition">
+      className="px-5 py-2 !bg-blue-500 text-white rounded-md hover:bg-[#5f20b5] transition">
         Login 
       </button>
     </header>
