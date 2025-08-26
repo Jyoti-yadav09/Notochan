@@ -13,7 +13,11 @@ const HeroSection = () => {
         <p className='text-lg mb-4 text-[#555]'>
           Cute, minimal & lightning fast — your personal note-sharing space.
         </p>
-       
+       <button onClick={()=>navigate("/login")}
+         
+      className="px-5 py-2  !bg-[#b9dde8] text-[#333] rounded-lg hover:bg-blue-200 transition shadow-md">
+        Get Started
+      </button>
       </div>
 
       <div className='md:w-1/2 mt-30 flex justify-center'>
