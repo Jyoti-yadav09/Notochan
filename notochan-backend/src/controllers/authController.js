@@ -1,26 +1,18 @@
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import bcrypt from "bcryptjs";
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { username, email, password } = req.body;
 
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
-    }
+    if (existingUser) return res.status(400).json({ msg: "User already exists" });
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({ username, email, password: hashedPassword });
+    await newUser.save();
 
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
-    });
-
-    await user.save();
-    res.json({ message: "User registered successfully" });
+    res.status(201).json({ msg: "User registered successfully" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -31,17 +23,24 @@ export const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "User not found" });
+    if (!user) return res.status(400).json({ msg: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+    if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    // Save user id in session
+    req.session.userId = user._id;
 
-    res.json({ token, user });
+    res.json({ msg: "Logged in successfully", user: { id: user._id, username: user.username, email: user.email } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+};
+
+export const logoutUser = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ msg: "Logout failed" });
+    res.clearCookie("connect.sid");
+    res.json({ msg: "Logged out successfully" });
+  });
 };
