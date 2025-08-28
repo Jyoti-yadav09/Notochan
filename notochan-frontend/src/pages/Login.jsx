@@ -64,7 +64,7 @@ const Login = () => {
 
             <button
               type="button"
-              className="w-full bg-[#4B0082] text-white py-2 rounded-lg hover:bg-[#5e2ca5] transition"
+              className="w-full !bg-[#4B0082] text-white py-2 rounded-lg hover:bg-[#5e2ca5] transition"
             >
               {isLogin ? "Login" : "Register"}
             </button>
