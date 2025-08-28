@@ -1,0 +1,137 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Footer from "../components/Footer";
+import { registerUser, loginUser } from "../services/auth";
+
+const Login = () => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async () => {
+    if (!email || !password || (!isLogin && !fullName)) {
+      alert("Please fill all fields!");
+      return;
+    }
+
+    if (!isLogin && password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    try {
+      if (isLogin) {
+        const res = await loginUser({ email, password });
+        alert(`Welcome back, ${res.user.fullName}!`);
+        localStorage.setItem("token", res.token); // save JWT
+        navigate("/dashboard"); 
+      } else {
+        await registerUser({ fullName, email, password });
+        alert("Registration successful! You can now login.");
+        setIsLogin(true);
+        setFullName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || "Something went wrong!");
+    }
+  };
+
+  return (
+    <div>
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F7F7] px-4">
+        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md">
+          <div className="flex justify-center mb-6">
+            <button
+              onClick={() => setIsLogin(true)}
+              className={`px-4 py-2 rounded-l-full ${
+                isLogin ? "bg-[#ADD8E6] text-[#4B0082]" : "bg-gray-100"
+              }`}
+            >
+              Login
+            </button>
+            <button
+              onClick={() => setIsLogin(false)}
+              className={`px-4 py-2 rounded-r-full ${
+                !isLogin ? "bg-[#ADD8E6] text-[#4B0082]" : "bg-gray-100"
+              }`}
+            >
+              Register
+            </button>
+          </div>
+
+          <h2 className="text-2xl font-semibold text-center mb-6 text-[#4B0082]">
+            {isLogin ? "Welcome Back!" : "Join NotoChan 📝"}
+          </h2>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+            className="space-y-4"
+          >
+            {!isLogin && (
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              />
+            )}
+
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            />
+
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            />
+
+            {!isLogin && (
+              <input
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              />
+            )}
+
+            <button
+              type="submit"
+              className="w-full !bg-[#4B0082] text-white py-2 rounded-lg hover:bg-[#5e2ca5] transition"
+            >
+              {isLogin ? "Login" : "Register"}
+            </button>
+          </form>
+
+          <button
+            onClick={() => navigate("/")}
+            className="mt-4 w-full bg-gray-200 text-[#4B0082] font-medium py-2 rounded-lg hover:bg-gray-300 transition"
+          >
+            ← Back to Home
+          </button>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default Login;
